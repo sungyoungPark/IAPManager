@@ -10,87 +10,28 @@ import StoreKit
 public final class IAPManager: NSObject {
     public static let shared = IAPManager()
     
-    private var memberShipRequest : SKProductsRequest?
-    private var membershipProduct : SKProduct?
+    private let useStoreKit2 : Bool
     
-    public func start() {
-        SKPaymentQueue.default().add(self)
+    private override init() {
+        // StoreKit2는 iOS 15 이상
+        if #available(iOS 15.0, *) {
+            useStoreKit2 = true
+        } else {
+            useStoreKit2 = false
+            SKPaymentQueue.default().add(IAPStoreKit1.shared)
+        }
+    }
+    
+    public func set() {
+        if #available(iOS 15.0, *) {
+            IAPStorekit2.shared.set()
+        } else {
+            SKPaymentQueue.default().add(IAPStoreKit1.shared)
+        }
     }
     
     deinit {
-        SKPaymentQueue.default().remove(self)
-    }
-    
-}
-
-extension IAPManager {
-    
-    public func loadProduct(productCode : [String]) {
-        memberShipRequest = SKProductsRequest(productIdentifiers: Set(productCode))
-        //memberShipRequest = SKProductsRequest(productIdentifiers: Set(["member_1month_test2"]))
-
-        memberShipRequest?.delegate = self
-        memberShipRequest?.start()
-    }
-    
-    
-}
-
-extension IAPManager: SKProductsRequestDelegate, SKPaymentTransactionObserver, SKRequestDelegate {
-    
-    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription)")
-        
-        for item in response.products {
-            
-            let product = item
-            
-            if product.productIdentifier.contains("mem") {
-                //membershipProduct = product
-                SKPaymentQueue.default().add(SKPayment(product: product))
-            }
-            
-            
-            
-        }
-        
-        
-    }
-    
-    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        
-        print("## updatedTransactions - transactions count:\(transactions.count)")
-        
-        for transaction in transactions {
-            
-            switch transaction.transactionState {
-            case   .purchased:
-                
-                switch transaction.payment.productIdentifier {
-                case let productId where productId.contains("mem"):
-                    
-                    
-                    SKPaymentQueue.default().finishTransaction(transaction)
-                    break
-                default:
-                    print("기타 결제")
-                    break
-                }
-                break
-                
-                
-            case .purchasing:
-                break
-            case .failed:
-                break
-            case .restored:
-                break
-            case .deferred:
-                break
-            }
-            
-        }
-        
+        SKPaymentQueue.default().remove(IAPStoreKit1.shared)
     }
     
 }

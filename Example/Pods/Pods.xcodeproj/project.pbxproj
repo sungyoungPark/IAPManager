@@ -13,6 +13,8 @@
 		5D980F2936A6BE8654C8FBE7C4E2FC32 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		805987F226C239AAED509EBBC9BFF3C6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		91221AF62E01420D00A5CAB5 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91221AF52E01420D00A5CAB5 /* IAPManager.swift */; };
+		9128773A2E028C94007F32A9 /* IAPStorekit2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912877392E028C94007F32A9 /* IAPStorekit2.swift */; };
+		9128773D2E028E13007F32A9 /* IAPStoreKit1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128773C2E028E13007F32A9 /* IAPStoreKit1.swift */; };
 		9FD4772868B0D768EB5894CFC71D1936 /* IAPManager-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 073E9D823910D4711EBB8ACC4744C48F /* IAPManager-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A7975964D788D8E91F9F282C78E70048 /* IAPManager-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E07FB62147E6B56A0B8B0422636EDAB0 /* IAPManager-dummy.m */; };
 		AB77E960031F2913FB2C9532BF40F9F1 /* Pods-IAPManager_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 402F781E7191E658ACD87953160B0991 /* Pods-IAPManager_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -60,6 +62,8 @@
 		8B13C99CFFF87A25BA3C32858123E8E7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8C9AB58B8D932AE14D4F183456884E40 /* Pods-IAPManager_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-IAPManager_Example-frameworks.sh"; sourceTree = "<group>"; };
 		91221AF52E01420D00A5CAB5 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
+		912877392E028C94007F32A9 /* IAPStorekit2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPStorekit2.swift; sourceTree = "<group>"; };
+		9128773C2E028E13007F32A9 /* IAPStoreKit1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPStoreKit1.swift; sourceTree = "<group>"; };
 		94E2C919349F59014BEBFD3C7E8B1786 /* Pods-IAPManager_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-IAPManager_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		BE48B9D173D438C900EE4D440476760A /* IAPManager.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IAPManager.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -163,6 +167,8 @@
 			isa = PBXGroup;
 			children = (
 				91221AF52E01420D00A5CAB5 /* IAPManager.swift */,
+				912877392E028C94007F32A9 /* IAPStorekit2.swift */,
+				9128773C2E028E13007F32A9 /* IAPStoreKit1.swift */,
 			);
 			name = Source;
 			path = IAPManager/Classes/Source;
@@ -391,7 +397,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				91221AF62E01420D00A5CAB5 /* IAPManager.swift in Sources */,
+				9128773D2E028E13007F32A9 /* IAPStoreKit1.swift in Sources */,
 				A7975964D788D8E91F9F282C78E70048 /* IAPManager-dummy.m in Sources */,
+				9128773A2E028C94007F32A9 /* IAPStorekit2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

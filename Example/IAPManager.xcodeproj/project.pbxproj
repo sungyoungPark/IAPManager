@@ -15,6 +15,7 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		6DB4B67B350B859282DDFF23 /* Pods_IAPManager_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD6297D638BBC6E17C8C70A /* Pods_IAPManager_Example.framework */; };
 		8ECE910D32A8AF137F1C6246 /* Pods_IAPManager_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6241C6199CA8E8E3D6E8B67F /* Pods_IAPManager_Tests.framework */; };
+		912877382E0279DC007F32A9 /* TestPurchase.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 912877372E0279DC007F32A9 /* TestPurchase.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6241C6199CA8E8E3D6E8B67F /* Pods_IAPManager_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IAPManager_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		912877372E0279DC007F32A9 /* TestPurchase.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestPurchase.storekit; sourceTree = "<group>"; };
 		B60F805217201AA2D4DEE0D6 /* Pods-IAPManager_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IAPManager_Example.release.xcconfig"; path = "Target Support Files/Pods-IAPManager_Example/Pods-IAPManager_Example.release.xcconfig"; sourceTree = "<group>"; };
 		BEC805F934D85025AF61BC94 /* IAPManager.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = IAPManager.podspec; path = ../IAPManager.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		EC9B55C5EAE796AA1EC588F8 /* Pods-IAPManager_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IAPManager_Tests.release.xcconfig"; path = "Target Support Files/Pods-IAPManager_Tests/Pods-IAPManager_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 		607FACD21AFB9204008FA782 /* Example for IAPManager */ = {
 			isa = PBXGroup;
 			children = (
+				912877362E0279B7007F32A9 /* PurchaseProduct */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -146,6 +149,14 @@
 				6241C6199CA8E8E3D6E8B67F /* Pods_IAPManager_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		912877362E0279B7007F32A9 /* PurchaseProduct */ = {
+			isa = PBXGroup;
+			children = (
+				912877372E0279DC007F32A9 /* TestPurchase.storekit */,
+			);
+			path = PurchaseProduct;
 			sourceTree = "<group>";
 		};
 		ECAEF92AF33D85D2D6D58D65 /* Pods */ = {
@@ -251,6 +262,7 @@
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				912877382E0279DC007F32A9 /* TestPurchase.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
