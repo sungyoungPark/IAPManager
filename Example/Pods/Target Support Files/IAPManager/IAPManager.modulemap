@@ -1,0 +1,6 @@
+framework module IAPManager {
+  umbrella header "IAPManager-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,16 @@
+PODS:
+  - IAPManager (0.1.0)
+
+DEPENDENCIES:
+  - IAPManager (from `../`)
+
+EXTERNAL SOURCES:
+  IAPManager:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  IAPManager: 21a37152cbab3d7d7da8fab04a8fd6962d881944
+
+PODFILE CHECKSUM: 7586298545781013b4aeb45644c5fb5bbb661715
+
+COCOAPODS: 1.16.2

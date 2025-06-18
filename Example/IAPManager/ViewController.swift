@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import IAPManager
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        IAPManager.shared.test123()
         // Do any additional setup after loading the view, typically from a nib.
     }
 
