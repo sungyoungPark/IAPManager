@@ -8,14 +8,10 @@
 import StoreKit
 
 @available(iOS 15.0, *)
-internal final class IAPStorekit2: NSObject {
+internal final class IAPStorekit2: NSObject, IAPProtocol {
     public static let shared = IAPStorekit2()
     
     private var updateListenerTask: Task<Void, Error>? = nil
-    
-    internal func set() {
-        updateListenerTask = listenForTransactions()
-    }
     
     private func listenForTransactions() -> Task<Void, Error> {
         return Task.detached {
@@ -35,6 +31,24 @@ internal final class IAPStorekit2: NSObject {
                     print("Transaction failed verification.")
                 }
             }
+        }
+    }
+    
+    
+    func set() {
+        updateListenerTask = listenForTransactions()
+    }
+    
+    func fetch(productCode: [String]) async throws -> [CommonProduct] {
+        let products = try await Product.products(for: productCode)
+        
+        return products.map {
+            CommonProduct(
+                id: $0.id,
+                title: $0.displayName,
+                description: $0.description,
+                price: $0.displayPrice
+            )
         }
     }
     

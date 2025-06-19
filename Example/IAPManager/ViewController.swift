@@ -44,6 +44,7 @@ class ViewController: UIViewController {
 
     @objc private func buttonTapped() {
         print("✅ 버튼이 눌렸습니다!")
+        IAPManager.shared.load(productCode : ["purchase_Subscription"])
      
     }
     

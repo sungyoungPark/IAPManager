@@ -7,34 +7,99 @@
 
 import StoreKit
 
-internal final class IAPStoreKit1: NSObject {
+internal final class IAPStoreKit1: NSObject, IAPProtocol {
+    
     public static let shared = IAPStoreKit1()
     
     private var memberShipRequest : SKProductsRequest?
     private var membershipProduct : SKProduct?
     
-    
-    
-}
-
-extension IAPStoreKit1 {
-    
-    public func loadProduct(productCode : [String]) {
-        memberShipRequest = SKProductsRequest(productIdentifiers: Set(productCode))
-        //memberShipRequest = SKProductsRequest(productIdentifiers: Set(["member_1month_test2"]))
-
-        memberShipRequest?.delegate = self
-        memberShipRequest?.start()
+    internal func set() {
+        SKPaymentQueue.default().add(self)
     }
     
-    public func purchase(productId : String) {
+    internal func fetch(productCode: [String]) async throws -> [CommonProduct] {
+        
+        try await withCheckedThrowingContinuation { continuation in
+            memberShipRequest = SKProductsRequest(productIdentifiers: Set(productCode))
+            let delegate = IAPStoreKit1Delegate { products in
+                let result = products.map {
+                    CommonProduct(
+                        id: $0.productIdentifier,
+                        title: $0.localizedTitle,
+                        description: $0.localizedDescription,
+                        price: Self.format(price: $0.price, locale: $0.priceLocale)
+                    )
+                }
+                continuation.resume(returning: result)
+            }
+            
+            // retain delegate
+            objc_setAssociatedObject(memberShipRequest as Any, "delegate", delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
+            memberShipRequest?.delegate = delegate
+            memberShipRequest?.start()
+        }
+    }
+    
+    
+    private static func format(price: NSDecimalNumber, locale: Locale) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = locale
+        return formatter.string(from: price) ?? "\(price)"
+    }
+}
+
+extension IAPStoreKit1 : SKPaymentTransactionObserver, SKRequestDelegate {
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        
+        print("## updatedTransactions - transactions count:\(transactions.count)")
+        
+        for transaction in transactions {
+            
+            switch transaction.transactionState {
+            case .purchased:
+                
+                switch transaction.payment.productIdentifier {
+                case let productId where productId.contains("mem"):
+                    
+                    break
+                default:
+                    print("기타 결제")
+                    break
+                }
+                print("결제 끝")
+                SKPaymentQueue.default().finishTransaction(transaction)
+                break
+                
+                
+            case .purchasing:
+                break
+            case .failed:
+                break
+            case .restored:
+                break
+            case .deferred:
+                break
+            }
+            
+        }
         
     }
+
 }
 
-extension IAPStoreKit1 : SKProductsRequestDelegate, SKPaymentTransactionObserver, SKRequestDelegate {
+
+internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate {
     
-    public func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+    private let completion: ([SKProduct]) -> Void
+    
+    init(completion: @escaping ([SKProduct]) -> Void) {
+        self.completion = completion
+    }
+    
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription)")
         
         for item in response.products {
@@ -51,41 +116,6 @@ extension IAPStoreKit1 : SKProductsRequestDelegate, SKPaymentTransactionObserver
             
         }
         
-        
-    }
-    
-    public func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        
-        print("## updatedTransactions - transactions count:\(transactions.count)")
-        
-        for transaction in transactions {
-            
-            switch transaction.transactionState {
-            case   .purchased:
-                
-                switch transaction.payment.productIdentifier {
-                case let productId where productId.contains("mem"):
-                    
-                    SKPaymentQueue.default().finishTransaction(transaction)
-                    break
-                default:
-                    print("기타 결제")
-                    break
-                }
-                break
-                
-                
-            case .purchasing:
-                break
-            case .failed:
-                break
-            case .restored:
-                break
-            case .deferred:
-                break
-            }
-            
-        }
         
     }
 }

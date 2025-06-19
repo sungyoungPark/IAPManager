@@ -10,23 +10,27 @@ import StoreKit
 public final class IAPManager: NSObject {
     public static let shared = IAPManager()
     
-    private let useStoreKit2 : Bool
+    private let IAPProtocol : IAPProtocol
     
     private override init() {
-        // StoreKit2는 iOS 15 이상
+       
         if #available(iOS 15.0, *) {
-            useStoreKit2 = true
+            IAPProtocol = IAPStorekit2.shared
         } else {
-            useStoreKit2 = false
-            SKPaymentQueue.default().add(IAPStoreKit1.shared)
+            IAPProtocol = IAPStoreKit1.shared
         }
     }
     
     public func set() {
-        if #available(iOS 15.0, *) {
-            IAPStorekit2.shared.set()
-        } else {
-            SKPaymentQueue.default().add(IAPStoreKit1.shared)
+        IAPProtocol.set()
+    }
+    
+
+    public func load(productCode : [String]) {
+        Task {
+            let product = try await IAPProtocol.fetch(productCode : productCode)
+            print("product ---", product)
+            print("iap ---", IAPProtocol)
         }
     }
     
@@ -35,5 +39,4 @@ public final class IAPManager: NSObject {
     }
     
 }
-
 
