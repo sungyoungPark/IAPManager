@@ -25,7 +25,11 @@ internal final class IAPStoreKit1: NSObject {
 
 extension IAPStoreKit1 : IAPProtocol {
     func set() {
-        SKPaymentQueue.default().add(self)
+        let transactionObserver = IAPStoreKit1TransactionObserver { [weak self] result in
+            print("res ---", result)
+        }
+        
+        SKPaymentQueue.default().add(transactionObserver)
     }
     
     func fetch(productCode: [String]) async throws -> [CommonProduct] {
@@ -87,7 +91,35 @@ extension IAPStoreKit1 : IAPProtocol {
 }
 
 
-extension IAPStoreKit1 : SKPaymentTransactionObserver, SKRequestDelegate {
+extension IAPStoreKit1 :  SKRequestDelegate {
+  
+
+}
+
+
+internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate {
+    
+    private let completion: ([SKProduct]) -> Void
+    
+    init(completion: @escaping ([SKProduct]) -> Void) {
+        self.completion = completion
+    }
+    
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription) \(response.products)")
+        completion(response.products)
+        
+    }
+}
+
+internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransactionObserver {
+    
+    private let completion: (IAPPurchaseResult) -> Void
+    
+    init(completion: @escaping (IAPPurchaseResult) -> Void) {
+        self.completion = completion
+    }
+    
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         
         print("## updatedTransactions - transactions count:\(transactions.count)")
@@ -107,6 +139,7 @@ extension IAPStoreKit1 : SKPaymentTransactionObserver, SKRequestDelegate {
                 }
                 print("결제 끝")
                 SKPaymentQueue.default().finishTransaction(transaction)
+                completion(.success)
                 break
                 
                 
@@ -121,23 +154,6 @@ extension IAPStoreKit1 : SKPaymentTransactionObserver, SKRequestDelegate {
             }
             
         }
-        
-    }
-
-}
-
-
-internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate {
-    
-    private let completion: ([SKProduct]) -> Void
-    
-    init(completion: @escaping ([SKProduct]) -> Void) {
-        self.completion = completion
-    }
-    
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription) \(response.products)")
-        completion(response.products)
         
     }
 }
