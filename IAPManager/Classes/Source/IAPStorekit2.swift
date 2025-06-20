@@ -52,6 +52,11 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         }
     }
     
+    func purchase(productCode: String) async -> IAPPurchaseResult {
+        print("storekit2")
+        return .success
+    }
+    
 }
 
 @available(iOS 15.0, *)

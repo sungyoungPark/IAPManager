@@ -10,48 +10,83 @@ import UIKit
 import IAPManager
 
 class ViewController: UIViewController {
-
-    
+    let buttonTitles = ["상품 정보 가져오기", "구매하기", "구매 복원"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupButton()
+        setupButtons()
     }
-
     
-    private func setupButton() {
-        let button = UIButton(type: .system)
-        button.setTitle("구매하기", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        button.backgroundColor = UIColor.systemBlue
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-
-        // 액션 연결
-        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-
-        view.addSubview(button)
-
-        // AutoLayout
+    func setupButtons() {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+        
+        // 오토레이아웃
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            button.widthAnchor.constraint(equalToConstant: 150),
-            button.heightAnchor.constraint(equalToConstant: 50)
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-    }
-
-    @objc private func buttonTapped() {
-        print("✅ 버튼이 눌렸습니다!")
-        IAPManager.shared.load(productCode : ["purchase_Subscription"])
-     
+        
+        // 버튼 생성 및 추가
+        for (index, title) in buttonTitles.enumerated() {
+            let button = UIButton(type: .system)
+            button.setTitle(title, for: .normal)
+            button.tag = index // 각 버튼을 구분하기 위한 태그 설정
+            button.titleLabel?.font = .systemFont(ofSize: 18, weight: .medium)
+            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(button)
+        }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @objc func buttonTapped(_ sender: UIButton) {
+        let index = sender.tag
+        let title = buttonTitles[index]
+        print("✅ 버튼 눌림: \(title)")
+        
+        // 여기서 각 버튼마다 다른 동작 설정 가능
+        switch index {
+        case 0:
+            //상품 정보 가져오기
+            IAPManager.shared.fetch(productCode: ["purchase_Subscription"]) { products in
+                var showMessage: String = ""
+                for product in products {
+                    let message = """
+                        상품 ID : \(product.id)
+                        상품 Title : \(product.title)
+                        상품 설명 : \(product.description)
+                        상품 가격 : \(product.price)
+                        \n
+                    """
+                    showMessage += message
+                }
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.showAlert(title: "상품 정보", message: showMessage, in: self)
+                }
+            }
+            
+        case 1:
+            print("두 번째 구매 버튼")
+            IAPManager.shared.purchase(productCode: "purchase_Subscription")
+        case 2:
+            print("세 번째 구매 버튼")
+        default:
+            break
+        }
     }
+    
+    func showAlert(title: String, message: String, in viewController: UIViewController) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
 
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+
+        viewController.present(alert, animated: true, completion: nil)
+    }
+    
 }
 

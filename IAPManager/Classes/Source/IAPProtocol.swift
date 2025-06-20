@@ -8,6 +8,8 @@
 protocol IAPProtocol {
     func set()
     func fetch(productCode: [String]) async throws -> [CommonProduct]
+    func purchase(productCode: String) async -> IAPPurchaseResult
+    
 }
 
 public struct CommonProduct {
@@ -15,4 +17,14 @@ public struct CommonProduct {
     public let title: String
     public let description: String
     public let price: String
+}
+
+enum IAPPurchaseResult {
+    case success
+    case failure(Error)
+}
+
+enum IAPError: Error {
+    case productNotFound
+    
 }

@@ -26,11 +26,17 @@ public final class IAPManager: NSObject {
     }
     
 
-    public func load(productCode : [String]) {
+    public func fetch(productCode : [String], completion: @escaping ([CommonProduct]) -> Void) {
         Task {
             let product = try await IAPProtocol.fetch(productCode : productCode)
-            print("product ---", product)
-            print("iap ---", IAPProtocol)
+            completion(product)
+        }
+    }
+    
+    public func purchase(productCode : String) {
+        Task {
+            let res = await IAPProtocol.purchase(productCode: productCode)
+            print("purchase res ---", res)
         }
     }
     

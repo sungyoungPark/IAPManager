@@ -7,22 +7,32 @@
 
 import StoreKit
 
-internal final class IAPStoreKit1: NSObject, IAPProtocol {
+internal final class IAPStoreKit1: NSObject {
     
     public static let shared = IAPStoreKit1()
     
-    private var memberShipRequest : SKProductsRequest?
-    private var membershipProduct : SKProduct?
+    private var iapRequest : SKProductsRequest?
+    private var iapProducts : [SKProduct]?
     
-    internal func set() {
+    private static func format(price: NSDecimalNumber, locale: Locale) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = locale
+        return formatter.string(from: price) ?? "\(price)"
+    }
+    
+}
+
+extension IAPStoreKit1 : IAPProtocol {
+    func set() {
         SKPaymentQueue.default().add(self)
     }
     
-    internal func fetch(productCode: [String]) async throws -> [CommonProduct] {
-        
+    func fetch(productCode: [String]) async throws -> [CommonProduct] {
         try await withCheckedThrowingContinuation { continuation in
-            memberShipRequest = SKProductsRequest(productIdentifiers: Set(productCode))
-            let delegate = IAPStoreKit1Delegate { products in
+            iapRequest = SKProductsRequest(productIdentifiers: Set(productCode))
+            let delegate = IAPStoreKit1Delegate { [weak self] products in
+                self?.iapProducts = products
                 let result = products.map {
                     CommonProduct(
                         id: $0.productIdentifier,
@@ -35,21 +45,47 @@ internal final class IAPStoreKit1: NSObject, IAPProtocol {
             }
             
             // retain delegate
-            objc_setAssociatedObject(memberShipRequest as Any, "delegate", delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-
-            memberShipRequest?.delegate = delegate
-            memberShipRequest?.start()
+            objc_setAssociatedObject(iapRequest as Any, "delegate", delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            
+            iapRequest?.delegate = delegate
+            iapRequest?.start()
         }
     }
     
-    
-    private static func format(price: NSDecimalNumber, locale: Locale) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = locale
-        return formatter.string(from: price) ?? "\(price)"
+    func purchase(productCode: String) async -> IAPPurchaseResult {
+        print("storekit1")
+        
+        if let iapProducts = iapProducts {
+            for iapProduct in iapProducts {
+                if iapProduct.productIdentifier == productCode {
+                    SKPaymentQueue.default().add(SKPayment(product: iapProduct))
+                    return .success
+                }
+            }
+            return .failure(.productNotFound as IAPError)
+        }
+        else {
+            do {
+                let _ = try await fetch(productCode: [productCode])
+                guard let iapProducts = iapProducts else { return .failure(.productNotFound as IAPError) }
+                for iapProduct in iapProducts {
+                    if iapProduct.productIdentifier == productCode {
+                        SKPaymentQueue.default().add(SKPayment(product: iapProduct))
+                        return .success
+                    }
+                }
+                return .failure(.productNotFound as IAPError)
+            } catch {
+                return .failure(error)
+            }
+            
+        }
+        
     }
+    
+    
 }
+
 
 extension IAPStoreKit1 : SKPaymentTransactionObserver, SKRequestDelegate {
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -100,22 +136,8 @@ internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate 
     }
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription)")
-        
-        for item in response.products {
-            
-            let product = item
-            
-            if product.productIdentifier.contains("mem") {
-                //membershipProduct = product
-                SKPaymentQueue.default().add(SKPayment(product: product))
-            }
-            else {
-                SKPaymentQueue.default().add(SKPayment(product: product))
-            }
-            
-        }
-        
+        print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription) \(response.products)")
+        completion(response.products)
         
     }
 }
