@@ -73,21 +73,21 @@ extension IAPStoreKit1 : IAPProtocol {
                     return .success
                 }
             }
-            return .failure(.productNotFound as IAPError)
+            return .failure(.productNotFound)
         }
         else {
             do {
                 let _ = try await fetch(productCode: [productCode])
-                guard let iapProducts = iapProducts else { return .failure(.productNotFound as IAPError) }
+                guard let iapProducts = iapProducts else { return .failure(.productNotFound) }
                 for iapProduct in iapProducts {
                     if iapProduct.productIdentifier == productCode {
                         SKPaymentQueue.default().add(SKPayment(product: iapProduct))
                         return .success
                     }
                 }
-                return .failure(.productNotFound as IAPError)
+                return .failure(.productNotFound)
             } catch {
-                return .failure(error)
+                return .unknown(error)
             }
         }
         
