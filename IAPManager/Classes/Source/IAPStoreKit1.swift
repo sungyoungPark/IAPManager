@@ -14,21 +14,28 @@ internal final class IAPStoreKit1: NSObject {
     private var iapRequest : SKProductsRequest?
     private var iapProducts : [SKProduct]?
     
+    private var transactionObserver : IAPStoreKit1TransactionObserver?
+    
     private static func format(price: NSDecimalNumber, locale: Locale) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = locale
         return formatter.string(from: price) ?? "\(price)"
     }
+ 
+    deinit {
+        guard let transactionObserver = transactionObserver else { return }
+        SKPaymentQueue.default().remove(transactionObserver)
+    }
     
 }
 
 extension IAPStoreKit1 : IAPProtocol {
     func set() {
-        let transactionObserver = IAPStoreKit1TransactionObserver { [weak self] result in
+        transactionObserver = IAPStoreKit1TransactionObserver { [weak self] result in
             print("res ---", result)
         }
-        
+        guard let transactionObserver = transactionObserver else { return }
         SKPaymentQueue.default().add(transactionObserver)
     }
     
@@ -82,7 +89,6 @@ extension IAPStoreKit1 : IAPProtocol {
             } catch {
                 return .failure(error)
             }
-            
         }
         
     }

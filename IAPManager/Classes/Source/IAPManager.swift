@@ -40,9 +40,5 @@ public final class IAPManager: NSObject {
         }
     }
     
-    deinit {
-        SKPaymentQueue.default().remove(IAPStoreKit1.shared)
-    }
-    
 }
 
