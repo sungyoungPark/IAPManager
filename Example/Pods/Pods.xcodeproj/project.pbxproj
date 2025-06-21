@@ -155,6 +155,15 @@
 			name = "Development Pods";
 			sourceTree = "<group>";
 		};
+		5BC2DEBD2E06720800B4E899 /* IAPStorekit */ = {
+			isa = PBXGroup;
+			children = (
+				9128773C2E028E13007F32A9 /* IAPStoreKit1.swift */,
+				912877392E028C94007F32A9 /* IAPStorekit2.swift */,
+			);
+			path = IAPStorekit;
+			sourceTree = "<group>";
+		};
 		64431EB6A9CF4BEAF8E4156A8F22FCD2 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
@@ -168,10 +177,9 @@
 		91221AF32E0141E800A5CAB5 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5BC2DEBD2E06720800B4E899 /* IAPStorekit */,
 				9128773E2E02AEAF007F32A9 /* IAPProtocol.swift */,
 				91221AF52E01420D00A5CAB5 /* IAPManager.swift */,
-				9128773C2E028E13007F32A9 /* IAPStoreKit1.swift */,
-				912877392E028C94007F32A9 /* IAPStorekit2.swift */,
 			);
 			name = Source;
 			path = IAPManager/Classes/Source;
