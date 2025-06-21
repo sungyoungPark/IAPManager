@@ -70,7 +70,12 @@ class ViewController: UIViewController {
             
         case 1:
             print("두 번째 구매 버튼")
-            IAPManager.shared.purchase(productCode: "purchase_Subscription")
+            IAPManager.shared.purchase(productCode: "purchase_Subscription") {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.showAlert(title: "", message: "구매 성공", in: self)
+                }
+            }
         case 2:
             print("세 번째 구매 버튼")
         default:
