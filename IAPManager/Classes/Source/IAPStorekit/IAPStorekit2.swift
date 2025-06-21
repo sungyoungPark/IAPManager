@@ -62,36 +62,32 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
             for product in iapProducts {
                 if product.id == productCode {
                     do {
-                        let result = try await product.purchase()
-                        switch result {
-                        case .success(let verification):
-                            switch verification {
-                            case .verified(let transaction):
-                               
-                                await transaction.finish()
-                                return .success
-                            case .unverified(_, let error):
-                                print("구매 인증 실패: \(error)")
-                                return .failure(error)
-                            }
-                        case .userCancelled:
-                            print("사용자 취소")
-                            return .failure(.userCancelled as IAPError)
-                        case .pending:
-                            print("보류 중")
-                        @unknown default:
-                            break
-                        }
-                    } catch {
-                        print("구매 실패: \(error)")
+                        return try await handlePurchase(product: product)
+                    }
+                    catch {
+                        return .unknown(error)
                     }
                 }
             }
-            
-            
         }
-        else {
-            
+        else { //구매 내역 없음
+            do {
+                let _ = try await fetch(productCode: [productCode])
+                guard let iapProducts = iapProducts else { return .failure(.productNotFound)}
+                for product in iapProducts {
+                    if product.id == productCode {
+                        do {
+                            return try await handlePurchase(product: product)
+                        }
+                        catch {
+                            return .unknown(error)
+                        }
+                    }
+                }
+            }
+            catch {
+                return .unknown(error)
+            }
         }
         return .success
     }
@@ -100,5 +96,33 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
 
 @available(iOS 15.0, *)
 extension IAPStorekit2 {
-    
+    private func handlePurchase(product : Product) async throws -> IAPPurchaseResult{
+        do {
+            let result = try await product.purchase()
+            switch result {
+            case .success(let verification):
+                switch verification {
+                case .verified(let transaction):
+                   
+                    await transaction.finish()
+                    return .success
+                case .unverified(_, let error):
+                    print("구매 인증 실패: \(error)")
+                    return .unknown(error)
+                }
+            case .userCancelled:
+                print("사용자 취소")
+                return .failure(.userCancelled)
+            case .pending:
+                print("보류 중")
+                return .holdPurcahse
+            @unknown default:
+                return .failure(.unknown)
+                break
+            }
+        } catch {
+            print("구매 실패: \(error)")
+            return .unknown(error)
+        }
+    }
 }

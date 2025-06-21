@@ -33,10 +33,21 @@ public final class IAPManager: NSObject {
         }
     }
     
-    public func purchase(productCode : String) {
+    public func purchase(productCode : String, onPurchaseSuccess: (() -> Void)? = nil) {
         Task {
-            let res = await IAPProtocol.purchase(productCode: productCode)
-            print("purchase res ---", res)
+            let result = await IAPProtocol.purchase(productCode: productCode)
+            print("purchase res ---", result)
+            
+            switch result {
+            case .success :
+                onPurchaseSuccess?()
+                
+                break
+            default :
+                break
+            }
+    
+            
         }
     }
     
