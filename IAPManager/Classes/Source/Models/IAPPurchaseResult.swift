@@ -6,10 +6,13 @@
 //
 enum IAPPurchaseResult {
     case success
-    case failure(Error?)
+    case holdPurcahse
+    case failure(IAPError?)
+    case unknown(Error)
 }
 
 enum IAPError: Error {
     case productNotFound
     case userCancelled
+    case unknown
 }
