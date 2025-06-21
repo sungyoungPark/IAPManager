@@ -26,7 +26,7 @@ public final class IAPManager: NSObject {
     }
     
 
-    public func fetch(productCode : [String], completion: @escaping ([CommonProduct]) -> Void) {
+    public func fetch(productCode : [String], completion: @escaping ([IAPProduct]) -> Void) {
         Task {
             let product = try await IAPProtocol.fetch(productCode : productCode)
             completion(product)

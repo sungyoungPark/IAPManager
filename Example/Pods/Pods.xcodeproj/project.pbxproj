@@ -10,6 +10,8 @@
 		1FC9F119D9F1D3DCAEFC67516203F35E /* Pods-IAPManager_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C74136572E12AB8DD1DA36BC041CA6 /* Pods-IAPManager_Tests-dummy.m */; };
 		22D94722CB8AAB580734A52E658491A2 /* Pods-IAPManager_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 89EB123ADFE980D9990DD6A053E35AF7 /* Pods-IAPManager_Example-dummy.m */; };
 		2EEADD27171F048255A24D02D50FF8DE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
+		5BC2DEC12E0675A200B4E899 /* IAPProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2DEC02E0675A200B4E899 /* IAPProduct.swift */; };
+		5BC2DEC32E06760100B4E899 /* IAPPurchaseResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC2DEC22E06760100B4E899 /* IAPPurchaseResult.swift */; };
 		5D980F2936A6BE8654C8FBE7C4E2FC32 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		805987F226C239AAED509EBBC9BFF3C6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384DDA2CB25005BD6479B5987C619DD4 /* Foundation.framework */; };
 		91221AF62E01420D00A5CAB5 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91221AF52E01420D00A5CAB5 /* IAPManager.swift */; };
@@ -56,6 +58,8 @@
 		48AE7A01EB75B63CCED13C6A6C59B23E /* Pods_IAPManager_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IAPManager_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		566938C2E1CB47994433B65BBE99FED7 /* IAPManager.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = IAPManager.modulemap; sourceTree = "<group>"; };
 		5910CFF4F4042CB83CD9F6767C3F4112 /* IAPManager.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = IAPManager.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		5BC2DEC02E0675A200B4E899 /* IAPProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPProduct.swift; sourceTree = "<group>"; };
+		5BC2DEC22E06760100B4E899 /* IAPPurchaseResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPPurchaseResult.swift; sourceTree = "<group>"; };
 		7352CD34F37AF31AD199B2501D0B8425 /* Pods-IAPManager_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-IAPManager_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		80156A4C8D4D0C8558726D35EA5847DD /* Pods-IAPManager_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-IAPManager_Example-umbrella.h"; sourceTree = "<group>"; };
 		858EF54B18FCAC96DF8F4BDEC111623C /* Pods-IAPManager_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-IAPManager_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
@@ -164,6 +168,23 @@
 			path = IAPStorekit;
 			sourceTree = "<group>";
 		};
+		5BC2DEBE2E06738300B4E899 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				9128773E2E02AEAF007F32A9 /* IAPProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		5BC2DEBF2E06756700B4E899 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5BC2DEC02E0675A200B4E899 /* IAPProduct.swift */,
+				5BC2DEC22E06760100B4E899 /* IAPPurchaseResult.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		64431EB6A9CF4BEAF8E4156A8F22FCD2 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
@@ -178,7 +199,8 @@
 			isa = PBXGroup;
 			children = (
 				5BC2DEBD2E06720800B4E899 /* IAPStorekit */,
-				9128773E2E02AEAF007F32A9 /* IAPProtocol.swift */,
+				5BC2DEBF2E06756700B4E899 /* Models */,
+				5BC2DEBE2E06738300B4E899 /* Protocols */,
 				91221AF52E01420D00A5CAB5 /* IAPManager.swift */,
 			);
 			name = Source;
@@ -407,7 +429,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BC2DEC12E0675A200B4E899 /* IAPProduct.swift in Sources */,
 				91221AF62E01420D00A5CAB5 /* IAPManager.swift in Sources */,
+				5BC2DEC32E06760100B4E899 /* IAPPurchaseResult.swift in Sources */,
 				9128773D2E028E13007F32A9 /* IAPStoreKit1.swift in Sources */,
 				A7975964D788D8E91F9F282C78E70048 /* IAPManager-dummy.m in Sources */,
 				9128773F2E02AEBD007F32A9 /* IAPProtocol.swift in Sources */,

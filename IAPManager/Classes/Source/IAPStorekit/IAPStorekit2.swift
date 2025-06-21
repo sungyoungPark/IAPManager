@@ -40,13 +40,13 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         updateListenerTask = listenForTransactions()
     }
     
-    func fetch(productCode: [String]) async throws -> [CommonProduct] {
+    func fetch(productCode: [String]) async throws -> [IAPProduct] {
         let products = try await Product.products(for: productCode)
         
         iapProducts = products
         
         return products.map {
-            CommonProduct(
+            IAPProduct(
                 id: $0.id,
                 title: $0.displayName,
                 description: $0.description,

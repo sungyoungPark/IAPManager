@@ -39,13 +39,13 @@ extension IAPStoreKit1 : IAPProtocol {
         SKPaymentQueue.default().add(transactionObserver)
     }
     
-    func fetch(productCode: [String]) async throws -> [CommonProduct] {
+    func fetch(productCode: [String]) async throws -> [IAPProduct] {
         try await withCheckedThrowingContinuation { continuation in
             iapRequest = SKProductsRequest(productIdentifiers: Set(productCode))
             let delegate = IAPStoreKit1Delegate { [weak self] products in
                 self?.iapProducts = products
                 let result = products.map {
-                    CommonProduct(
+                    IAPProduct(
                         id: $0.productIdentifier,
                         title: $0.localizedTitle,
                         description: $0.localizedDescription,
