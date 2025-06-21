@@ -34,6 +34,7 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         }
     }
     
+    private var iapProducts : [Product]?
     
     func set() {
         updateListenerTask = listenForTransactions()
@@ -41,6 +42,8 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
     
     func fetch(productCode: [String]) async throws -> [CommonProduct] {
         let products = try await Product.products(for: productCode)
+        
+        iapProducts = products
         
         return products.map {
             CommonProduct(
@@ -53,7 +56,43 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
     }
     
     func purchase(productCode: String) async -> IAPPurchaseResult {
-        print("storekit2")
+        print("storekit2", productCode)
+        
+        if let iapProducts = iapProducts {
+            for product in iapProducts {
+                if product.id == productCode {
+                    do {
+                        let result = try await product.purchase()
+                        switch result {
+                        case .success(let verification):
+                            switch verification {
+                            case .verified(let transaction):
+                               
+                                await transaction.finish()
+                                return .success
+                            case .unverified(_, let error):
+                                print("구매 인증 실패: \(error)")
+                                return .failure(error)
+                            }
+                        case .userCancelled:
+                            print("사용자 취소")
+                            return .failure(.userCancelled as IAPError)
+                        case .pending:
+                            print("보류 중")
+                        @unknown default:
+                            break
+                        }
+                    } catch {
+                        print("구매 실패: \(error)")
+                    }
+                }
+            }
+            
+            
+        }
+        else {
+            
+        }
         return .success
     }
     
