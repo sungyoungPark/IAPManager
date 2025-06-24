@@ -5,7 +5,7 @@
 //  Created by 박성영 on 6/21/25.
 //
 enum IAPPurchaseResult {
-    case success
+    case success(Any)
     case holdPurcahse
     case failure(IAPError?)
     case unknown(Error)

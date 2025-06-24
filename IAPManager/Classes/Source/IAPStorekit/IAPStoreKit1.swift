@@ -32,9 +32,7 @@ internal final class IAPStoreKit1: NSObject {
 
 extension IAPStoreKit1 : IAPProtocol {
     func set() {
-        transactionObserver = IAPStoreKit1TransactionObserver { [weak self] result in
-            print("res ---", result)
-        }
+        transactionObserver = IAPStoreKit1TransactionObserver ()
         guard let transactionObserver = transactionObserver else { return }
         SKPaymentQueue.default().add(transactionObserver)
     }
@@ -63,14 +61,16 @@ extension IAPStoreKit1 : IAPProtocol {
         }
     }
     
-    func purchase(productCode: String) async -> IAPPurchaseResult {
-        print("storekit1")
+    func purchase(productCode: String) async throws -> IAPPurchaseResult {
         
         if let iapProducts = iapProducts {
             for iapProduct in iapProducts {
                 if iapProduct.productIdentifier == productCode {
-                    SKPaymentQueue.default().add(SKPayment(product: iapProduct))
-                    return .success
+                    return try await withCheckedThrowingContinuation { continuation in
+                        transactionObserver?.continuation = continuation
+                        SKPaymentQueue.default().add(SKPayment(product: iapProduct))
+                    }
+                  
                 }
             }
             return .failure(.productNotFound)
@@ -81,8 +81,10 @@ extension IAPStoreKit1 : IAPProtocol {
                 guard let iapProducts = iapProducts else { return .failure(.productNotFound) }
                 for iapProduct in iapProducts {
                     if iapProduct.productIdentifier == productCode {
-                        SKPaymentQueue.default().add(SKPayment(product: iapProduct))
-                        return .success
+                        return try await withCheckedThrowingContinuation { continuation in
+                            transactionObserver?.continuation = continuation
+                            SKPaymentQueue.default().add(SKPayment(product: iapProduct))
+                        }
                     }
                 }
                 return .failure(.productNotFound)
@@ -120,11 +122,7 @@ internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate 
 
 internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransactionObserver {
     
-    private let completion: (IAPPurchaseResult) -> Void
-    
-    init(completion: @escaping (IAPPurchaseResult) -> Void) {
-        self.completion = completion
-    }
+    var continuation: CheckedContinuation<IAPPurchaseResult, Error>?
     
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         
@@ -144,8 +142,9 @@ internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransa
                     break
                 }
                 print("결제 끝")
+                continuation?.resume(returning: .success(transaction))
+                continuation = nil
                 SKPaymentQueue.default().finishTransaction(transaction)
-                completion(.success)
                 break
                 
                 

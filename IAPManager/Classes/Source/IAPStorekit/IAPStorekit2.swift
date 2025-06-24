@@ -69,6 +69,7 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
                     }
                 }
             }
+            return .failure(.productNotFound)
         }
         else { //구매 내역 없음
             do {
@@ -84,12 +85,12 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
                         }
                     }
                 }
+                return .failure(.productNotFound)
             }
             catch {
                 return .unknown(error)
             }
         }
-        return .success
     }
     
 }
@@ -105,7 +106,7 @@ extension IAPStorekit2 {
                 case .verified(let transaction):
                    
                     await transaction.finish()
-                    return .success
+                    return .success(transaction)
                 case .unverified(_, let error):
                     print("구매 인증 실패: \(error)")
                     return .unknown(error)
