@@ -12,7 +12,7 @@ internal final class IAPStoreKit1: NSObject {
     public static let shared = IAPStoreKit1()
     
     private var iapRequest : SKProductsRequest?
-    private var iapProducts : [SKProduct]?
+    private var iapProducts : [String: SKProduct] = [:]
     
     private var transactionObserver : IAPStoreKit1TransactionObserver?
     
@@ -41,9 +41,9 @@ extension IAPStoreKit1 : IAPProtocol {
         try await withCheckedThrowingContinuation { continuation in
             iapRequest = SKProductsRequest(productIdentifiers: Set(productCode))
             let delegate = IAPStoreKit1Delegate { [weak self] products in
-                self?.iapProducts = products
                 let result = products.map {
-                    IAPProduct(
+                    self?.iapProducts[$0.productIdentifier] = $0
+                    return IAPProduct(
                         id: $0.productIdentifier,
                         title: $0.localizedTitle,
                         description: $0.localizedDescription,
@@ -62,29 +62,24 @@ extension IAPStoreKit1 : IAPProtocol {
     }
     
     func purchase(productCode: String) async throws -> IAPPurchaseResult {
-        
-        if let iapProducts = iapProducts {
-            for iapProduct in iapProducts {
-                if iapProduct.productIdentifier == productCode {
+    
+        if let product = iapProducts[productCode] {
+                if product.productIdentifier == productCode {
                     return try await withCheckedThrowingContinuation { continuation in
                         transactionObserver?.continuation = continuation
-                        SKPaymentQueue.default().add(SKPayment(product: iapProduct))
+                        SKPaymentQueue.default().add(SKPayment(product: product))
                     }
-                  
-                }
             }
             return .failure(.productNotFound)
         }
         else {
             do {
-                let _ = try await fetch(productCode: [productCode])
-                guard let iapProducts = iapProducts else { return .failure(.productNotFound) }
-                for iapProduct in iapProducts {
-                    if iapProduct.productIdentifier == productCode {
-                        return try await withCheckedThrowingContinuation { continuation in
-                            transactionObserver?.continuation = continuation
-                            SKPaymentQueue.default().add(SKPayment(product: iapProduct))
-                        }
+                let fetchProduct = try await fetch(productCode: [productCode])
+                guard let product = iapProducts[productCode] else { return .failure(.productNotFound)}
+                if product.productIdentifier == productCode {
+                    return try await withCheckedThrowingContinuation { continuation in
+                        transactionObserver?.continuation = continuation
+                        SKPaymentQueue.default().add(SKPayment(product: product))
                     }
                 }
                 return .failure(.productNotFound)
@@ -116,7 +111,6 @@ internal final class IAPStoreKit1Delegate : NSObject, SKProductsRequestDelegate 
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         print("## IAP didReceiveResponse - 상품 상세정보 가져옴!! === \(response.debugDescription) \(response.products)")
         completion(response.products)
-        
     }
 }
 
@@ -133,15 +127,6 @@ internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransa
             switch transaction.transactionState {
             case .purchased:
                 
-                switch transaction.payment.productIdentifier {
-                case let productId where productId.contains("mem"):
-                    
-                    break
-                default:
-                    print("기타 결제")
-                    break
-                }
-                print("결제 끝")
                 continuation?.resume(returning: .success(transaction))
                 continuation = nil
                 SKPaymentQueue.default().finishTransaction(transaction)
