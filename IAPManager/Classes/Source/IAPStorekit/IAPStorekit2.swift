@@ -34,7 +34,7 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         }
     }
     
-    private var iapProducts : [Product]?
+    private var iapProducts : [String : Product] = [:]
     
     func set() {
         updateListenerTask = listenForTransactions()
@@ -43,10 +43,9 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
     func fetch(productCode: [String]) async throws -> [IAPProduct] {
         let products = try await Product.products(for: productCode)
         
-        iapProducts = products
-        
-        return products.map {
-            IAPProduct(
+        return products.map { [weak self] in
+            self?.iapProducts[$0.id] = $0
+            return IAPProduct(
                 id: $0.id,
                 title: $0.displayName,
                 description: $0.description,
@@ -58,15 +57,13 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
     func purchase(productCode: String) async -> IAPPurchaseResult {
         print("storekit2", productCode)
         
-        if let iapProducts = iapProducts {
-            for product in iapProducts {
-                if product.id == productCode {
-                    do {
-                        return try await handlePurchase(product: product)
-                    }
-                    catch {
-                        return .unknown(error)
-                    }
+        if let iapProduct = iapProducts[productCode] {
+            if iapProduct.id == productCode {
+                do {
+                    return try await handlePurchase(product: iapProduct)
+                }
+                catch {
+                    return .unknown(error)
                 }
             }
             return .failure(.productNotFound)
@@ -74,15 +71,13 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         else { //구매 내역 없음
             do {
                 let _ = try await fetch(productCode: [productCode])
-                guard let iapProducts = iapProducts else { return .failure(.productNotFound)}
-                for product in iapProducts {
-                    if product.id == productCode {
-                        do {
-                            return try await handlePurchase(product: product)
-                        }
-                        catch {
-                            return .unknown(error)
-                        }
+                guard let iapProduct = iapProducts[productCode] else { return .failure(.productNotFound)}
+                if iapProduct.id == productCode {
+                    do {
+                        return try await handlePurchase(product: iapProduct)
+                    }
+                    catch {
+                        return .unknown(error)
                     }
                 }
                 return .failure(.productNotFound)
@@ -91,6 +86,10 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
                 return .unknown(error)
             }
         }
+    }
+    
+    func restore() async {
+        
     }
     
 }
