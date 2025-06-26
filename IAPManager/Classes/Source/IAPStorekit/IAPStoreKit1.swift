@@ -75,6 +75,7 @@ extension IAPStoreKit1 : IAPProtocol {
         else {
             do {
                 let fetchProduct = try await fetch(productCode: [productCode])
+                print("FetchProduct ---", fetchProduct)
                 guard let product = iapProducts[productCode] else { return .failure(.productNotFound)}
                 if product.productIdentifier == productCode {
                     return try await withCheckedThrowingContinuation { continuation in
@@ -90,6 +91,13 @@ extension IAPStoreKit1 : IAPProtocol {
         
     }
     
+    func restore() async throws -> IAPPurchaseResult {
+        print("복원 버튼 클릭")
+        SKPaymentQueue.default().restoreCompletedTransactions()
+        return try await withCheckedThrowingContinuation { continuation in
+            transactionObserver?.continuation = continuation
+        }
+    }
     
 }
 
@@ -138,6 +146,8 @@ internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransa
             case .failed:
                 break
             case .restored:
+                print("복원 완료 : \(transaction.payment.productIdentifier)")
+                SKPaymentQueue.default().finishTransaction(transaction)
                 break
             case .deferred:
                 break
@@ -146,4 +156,24 @@ internal final class IAPStoreKit1TransactionObserver : NSObject, SKPaymentTransa
         }
         
     }
+    
+    func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
+        print("복원 fin")
+        
+        let restoredTransactions = queue.transactions.filter { $0.transactionState == .restored }
+        
+        if restoredTransactions.isEmpty {
+            // 복원할 항목 없음
+            print("복원할 항목이 없습니다.")
+        } else {
+            // 복원 성공
+            print("복원 성공 ----", restoredTransactions.count)
+            continuation?.resume(returning: .success(restoredTransactions))
+            continuation = nil
+        }
+        
+        
+    }
+    
+    
 }

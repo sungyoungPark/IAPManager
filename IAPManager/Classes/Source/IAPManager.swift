@@ -45,7 +45,7 @@ public final class IAPManager: NSObject {
                         onPurchaseSuccess?(.success(purchaseResult))
                     }
                     else if #available(iOS 15.0, *) {
-                        if let receipt = receipt as? Transaction {
+                        if let receipt = receipt as? Transaction { //storekit2
                             let purchaseResult = self.dictionary(from: receipt)
                             onPurchaseSuccess?(.success(purchaseResult))
                         }
@@ -63,6 +63,28 @@ public final class IAPManager: NSObject {
             
         }
     }
+    
+    public func restorePurchases(onRestoreSuccess: ((Result<[[String:Any]], Error>) -> Void)? = nil) {
+        Task {
+            let result = try? await IAPProtocol.restore()
+            
+            switch result {
+            case .success(let transactions) :
+                
+                if let transactions = transactions as? [SKPaymentTransaction] {
+                    let transactionsDicts: [[String:Any]] = transactions.compactMap { [weak self] in
+                        self?.dictionary(from: $0)
+                    }
+                    onRestoreSuccess?(.success(transactionsDicts))
+                }
+                
+            default :
+                break
+            }
+
+        }
+    }
+    
     
 }
 

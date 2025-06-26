@@ -88,8 +88,8 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
         }
     }
     
-    func restore() async {
-        
+    func restore() async throws -> IAPPurchaseResult {
+        return .holdPurcahse
     }
     
 }

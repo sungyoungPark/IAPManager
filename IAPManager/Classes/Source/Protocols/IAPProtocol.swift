@@ -9,5 +9,5 @@ protocol IAPProtocol {
     func set()
     func fetch(productCode: [String]) async throws -> [IAPProduct]
     func purchase(productCode: String) async throws -> IAPPurchaseResult
-    
+    func restore() async throws -> IAPPurchaseResult
 }
