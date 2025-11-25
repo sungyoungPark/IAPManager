@@ -22,8 +22,8 @@ it, simply add the following line to your Podfile:
 pod 'IAPManager'
 ```
 
-## Installation
-심화 사용 예시
+## 사용 예시
+
 ![Image](https://github.com/user-attachments/assets/435fc7d3-e403-4e44-9b3d-261d4bd66228)
 
 ## Author
