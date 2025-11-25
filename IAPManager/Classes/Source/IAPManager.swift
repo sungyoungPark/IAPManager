@@ -70,13 +70,20 @@ public final class IAPManager: NSObject {
             
             switch result {
             case .success(let transactions) :
-                
+                print("restorePurchases ---", transactions)
                 if let transactions = transactions as? [SKPaymentTransaction] {
                     let transactionsDicts: [[String:Any]] = transactions.compactMap { [weak self] in
                         self?.dictionary(from: $0)
                     }
                     onRestoreSuccess?(.success(transactionsDicts))
                 }
+                else if #available(iOS 15.0, *), let transactions = transactions as? [Transaction] {
+                    let transactionsDicts: [[String:Any]] = transactions.compactMap { [weak self] in
+                        self?.dictionary(from: $0)
+                    }
+                    onRestoreSuccess?(.success(transactionsDicts))
+                }
+                
                 
             default :
                 break

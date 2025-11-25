@@ -79,6 +79,15 @@ class ViewController: UIViewController {
             }
         case 2:
             print("세 번째 구매 버튼")
+            IAPManager.shared.restorePurchases { res in
+                print("res ---", res)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.showAlert(title: "", message: "구매 복원 성공\n \(res)", in: self)
+                }
+                
+            }
+            
         default:
             break
         }

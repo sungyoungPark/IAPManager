@@ -89,7 +89,22 @@ internal final class IAPStorekit2: NSObject, IAPProtocol {
     }
     
     func restore() async throws -> IAPPurchaseResult {
-        return .holdPurcahse
+        print("storekit2 restore")
+        var restoredTransactions: [Transaction] = []
+        
+        for await result in Transaction.currentEntitlements {
+            switch result {
+            case .verified(let transaction):
+                restoredTransactions.append(transaction)
+            case .unverified:
+                // 영수증 검증 실패한 경우
+                break
+            }
+        }
+        
+        return .success(restoredTransactions)
+//        return restoredTransactions
+//        return .holdPurcahse
     }
     
 }
