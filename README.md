@@ -7,9 +7,11 @@
 
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+예시 프로젝트를 실행하려면, 먼저 저장소를 클론한 뒤 Example 디렉터리에서 pod install을 실행하세요.
 
 ## Requirements
+
+안정적으로 빌드하기 위해서는 프로젝트 타겟 및 패키지 타겟도 ios13 이상으로 설정해주세요.
 
 ## Installation
 
